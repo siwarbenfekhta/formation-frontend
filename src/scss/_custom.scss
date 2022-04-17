@@ -1,0 +1,14 @@
+// Here you can add other styles
+.cdk-overlay-connected-position-bounding-box,
+.cdk-global-overlay-wrapper,
+.cdk-overlay-container,
+.mat-option{
+z-index: 999999 !important;
+}
+#mat-select-2-panel{
+    top: 160px!important;
+}
+body > modal-container > div > div > div > div > div.modal-content > div.card-body > form > div > section > mat-form-field {
+    margin: 0px!important;
+    width: 100%;
+}
