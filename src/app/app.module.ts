@@ -44,6 +44,16 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
 import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
 import { DataTablesModule } from 'angular-datatables';
+import { GoogleMapsModule } from '@angular/google-maps'
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
+import { BsDatepickerModule, DatePickerComponent, DatepickerModule } from 'ngx-bootstrap/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SessionDetailComponent } from './views/base/session-detail/session-detail.component';
+
 
 @NgModule({
   imports: [
@@ -64,7 +74,13 @@ import { DataTablesModule } from 'angular-datatables';
     HttpClientModule,
     ModalModule.forRoot(),
     DataTablesModule,
-    AppFooterModule
+    AppFooterModule,
+    LeafletModule,
+    BsDatepickerModule.forRoot(),
+    DatepickerModule.forRoot(),
+  
+   
+    
 
 
   ],
@@ -78,7 +94,9 @@ import { DataTablesModule } from 'angular-datatables';
   ],
   exports:[
     ModalModule ,
-    DataTablesModule
+    DataTablesModule,
+    MatDatepickerModule, 
+    MatNativeDateModule 
   ],
   providers: [
     {
@@ -91,4 +109,5 @@ import { DataTablesModule } from 'angular-datatables';
   bootstrap: [ AppComponent ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
+
 export class AppModule { }

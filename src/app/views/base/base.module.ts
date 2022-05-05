@@ -66,6 +66,14 @@ import {MatSelectModule} from '@angular/material/select';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { FormateurComponent } from './formateur/formateur.component';
 import { ParticipantComponent } from './participant/participant.component';
+import { SessionComponent } from './session/session.component';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
+import { BsDatepickerModule, DatePickerComponent, DatepickerModule } from 'ngx-bootstrap/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -92,7 +100,12 @@ import { ParticipantComponent } from './participant/participant.component';
     ReactiveFormsModule,
     MatRadioModule,
     MatSelectModule,
-    NgMultiSelectDropDownModule.forRoot()
+    NgMultiSelectDropDownModule.forRoot(),
+    LeafletModule,
+    BsDatepickerModule.forRoot(),
+    DatepickerModule.forRoot(),
+    NgxMatSelectSearchModule
+    
   ],
   declarations: [
     CardsComponent,
@@ -114,7 +127,9 @@ import { ParticipantComponent } from './participant/participant.component';
     OrganismeComponent,
     FormationComponent,
     FormateurComponent,
-    ParticipantComponent
+    ParticipantComponent,
+    SessionComponent,
+    SessionDetailComponent
   ]
 })
 export class BaseModule { }

@@ -34,7 +34,7 @@ export class FormationComponent implements OnInit {
   dropdownSettings: any = {};
   closeDropdownSelection = false;
   disabled = false;
-  domaines: import("c:/Users/ThinkPad/Downloads/frontend-formation/frontend-formation/src/app/shared/models/domaine.model").Domaine[];
+  domaines: import("src/app/shared/models/domaine.model").Domaine[];
   selectedLevel: any;
   selectedDomaine: any;
   selectedType: any;

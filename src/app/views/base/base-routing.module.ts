@@ -21,6 +21,8 @@ import { OrganismeComponent } from './organisme/organisme.component';
 import { FormationComponent } from './formation/formation.component';
 import { FormateurComponent } from './formateur/formateur.component';
 import { ParticipantComponent } from './participant/participant.component';
+import { SessionComponent } from './session/session.component';
+import { SessionDetailComponent } from './session-detail/session-detail.component';
 
 const routes: Routes = [
   {
@@ -164,8 +166,23 @@ const routes: Routes = [
         component: NavbarsComponent,
         data: {
           title: 'Navbars'
-        }
+        },
+      },
+      {
+      path: 'sessions',
+      component: SessionComponent,
+      data: {
+        title: 'Sessions'
       }
+      },
+      {
+        path: 'sessions/detail/:id',
+        component: SessionDetailComponent,
+        data: {
+          title: 'Sessions'
+        }
+        }
+      
     ]
   }
 ];
