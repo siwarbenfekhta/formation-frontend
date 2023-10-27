@@ -74,20 +74,39 @@
         <div class="card-body">
           <form action="" method="post" name="form" [formGroup]="form">
             <div class="form-group">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                </div>
-                <input type="text" id="libelle" name="libelle" class="form-control" formControlName="libelle"
-                  placeholder="libelle" required>
-              </div>
+
+            <section>
+            <mat-form-field appearance="outline">
+              <mat-label>Select a country</mat-label>
+              <mat-select #countrySelect (selectionChange)="onSelectEvent($event)">
+                <mat-select-trigger>{{countrySelect.value}}</mat-select-trigger>
+          
+                <mat-option>
+                  <lib-mat-select-search
+                    [list]="countries"
+                    [searchProperties]="['name']"
+                    (filtered)="filteredCountries = $event">
+                  </lib-mat-select-search>
+                </mat-option>
+          
+                <mat-option *ngFor="let country of filteredCountries" [value]="country.name" >
+                  <div class="country-container">
+                    <span>{{country.name}}</span>
+                  </div>
+                </mat-option>
+          
+              </mat-select>
+            </mat-form-field>
+            </section>
+
+
             </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="modalRef.hide()">Annuler</button>
           <button type="button" class="btn btn-primary" (click)="OnCreateUser()"
-            [disabled]="form.invalid">Confirmer</button>
+           >Confirmer</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -111,20 +130,36 @@
         <div class="card-body">
           <form action="" method="post" name="form" [formGroup]="form">
             <div class="form-group">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text"><i class="fa fa-user"></i></span>
-                </div>
-                <input type="text" id="libelle" name="libelle" class="form-control" formControlName="libelle"
-                  placeholder="libelle" required>
+            <section>
+              <mat-form-field appearance="outline">
+                <mat-label>Select a country</mat-label>
+                <mat-select #countrySelect (selectionChange)="onSelectEvent($event)">
+                  <mat-select-trigger>{{countrySelect.value}}</mat-select-trigger>
+            
+                  <mat-option>
+                    <lib-mat-select-search
+                      [list]="countries"
+                      [searchProperties]="['name']"
+                      (filtered)="filteredCountries = $event">
+                    </lib-mat-select-search>
+                  </mat-option>
+            
+                  <mat-option *ngFor="let country of filteredCountries" [value]="country.name" >
+                    <div class="country-container">
+                      <span>{{country.name}}</span>
+                    </div>
+                  </mat-option>
+            
+                </mat-select>
+              </mat-form-field>
+              </section>
               </div>
-            </div>
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" (click)="modalRef.hide() ; form.reset()">Annuler</button>
           <button type="button" class="btn btn-primary" (click)="updateUser()"
-            [disabled]="form.invalid">Modifier</button>
+            >Modifier</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

@@ -66,6 +66,8 @@ import {MatSelectModule} from '@angular/material/select';
 import { NgMultiSelectDropDownModule } from 'ng-multiselect-dropdown';
 import { FormateurComponent } from './formateur/formateur.component';
 import { ParticipantComponent } from './participant/participant.component';
+import { AuthInterceptorPorviders} from '../../shared/interceptor/auth.interceptor';
+import { TestComponent } from './test/test.component'
 import { SessionComponent } from './session/session.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { BsDatepickerModule, DatePickerComponent, DatepickerModule } from 'ngx-bootstrap/datepicker';
@@ -74,6 +76,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { SessionDetailComponent } from './session-detail/session-detail.component';
 
+import { MatSelectSearchModule } from 'mat-select-search';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 @NgModule({
   imports: [
     CommonModule,
@@ -101,11 +105,12 @@ import { SessionDetailComponent } from './session-detail/session-detail.componen
     MatRadioModule,
     MatSelectModule,
     NgMultiSelectDropDownModule.forRoot(),
+    MatSelectSearchModule,
     LeafletModule,
     BsDatepickerModule.forRoot(),
     DatepickerModule.forRoot(),
-    NgxMatSelectSearchModule
-    
+    NgxMatSelectSearchModule,
+    MatSelectSearchModule,
   ],
   declarations: [
     CardsComponent,
@@ -128,8 +133,10 @@ import { SessionDetailComponent } from './session-detail/session-detail.componen
     FormationComponent,
     FormateurComponent,
     ParticipantComponent,
+    TestComponent,
     SessionComponent,
     SessionDetailComponent
-  ]
+  ],
+  providers : [AuthInterceptorPorviders]
 })
 export class BaseModule { }

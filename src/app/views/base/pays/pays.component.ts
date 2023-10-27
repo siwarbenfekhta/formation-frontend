@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component,ChangeDetectionStrategy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -10,20 +10,25 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TableUtil } from "../tableUtil";
 import { Pays } from 'src/app/shared/models/Pays.model';
-
+import { HttpClient,HttpHeaders } from '@angular/common/http';
+import names from '../../../../assets/names.json'
 export function getAlertConfig(): AlertConfig {
   return Object.assign(new AlertConfig(), { type: 'success' });
 }
 @Component({
   selector: 'app-pays',
   templateUrl: './pays.component.html',
-  styleUrls: ['./pays.component.scss']
+  styleUrls: ['./pays.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
+
 })
 export class PaysComponent implements OnInit {
-
+  countries: Record<string, string>[] = names;
+  filteredCountries: Record<string, string>[] = []
   payss: Pays[];
   modalRef: BsModalRef;
   form: FormGroup;
+  public countryList:{name:string, code:string}[] = names;
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
   displayedColumns: string[] = ['id', 'libelle', 'modifier', 'supprimer'];
@@ -32,11 +37,14 @@ export class PaysComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   checked: string;
   pays: any;
+  listC: any[]=[];
+  selectedPays: any;
   constructor(private paysService: PaysService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
     private _formBuilder: FormBuilder,
-    private router: Router) {
+    private router: Router,
+    private http: HttpClient) {
   }
 
   openModal(template: TemplateRef<any>) {
@@ -59,7 +67,13 @@ export class PaysComponent implements OnInit {
       libelle: ['', Validators.required],
     });
 
-    console.log(this.form);
+    Object.keys(names).forEach((key) => {
+      console.log(names[key]); 
+      this.listC.push(names[key]);
+    });
+      console.log(this.listC);
+
+
   }
   getAll() {
     this.paysService.getAll()
@@ -90,7 +104,7 @@ export class PaysComponent implements OnInit {
   OnCreateUser(): any {
     const libelle = this.form.get('libelle').value;
     const pays = {
-      libelle: libelle,
+      libelle: this.selectedPays,
     };
     this.paysService.createPays(pays).subscribe(res => {
       console.log("ok");
@@ -98,6 +112,8 @@ export class PaysComponent implements OnInit {
       this._snackBar.open("pays added successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
       this.modalRef.hide();
       this.form.reset();
+      this.selectedPays = null ;
+
     })
   }
 
@@ -113,9 +129,12 @@ export class PaysComponent implements OnInit {
   }
   updateUser() {
     const id = localStorage.getItem('id');
+    if (this.selectedPays == null){
+      this.selectedPays = this.form.value.libelle ;
+    }
     const pays = {
       id: id,
-      libelle: this.form.value.libelle,
+      libelle: this.selectedPays,
     }
     console.log(pays);
     this.paysService.updatePays(pays).subscribe(res => {
@@ -123,12 +142,18 @@ export class PaysComponent implements OnInit {
       this.form.reset();
       this.modalRef.hide();
       this.getAll();
+      this.selectedPays = null ;
 
     })
 
   }
   exportTable() {
     TableUtil.exportTableToExcel("ExampleMaterialTable");
+  }
+
+  onSelectEvent(value: any) {
+    console.log(value.value);
+    this.selectedPays = value.value ;
   }
 
 }

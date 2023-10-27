@@ -33,7 +33,7 @@ import { ParticipantService } from 'src/app/shared/services/participant.service'
   styleUrls: ['./session.component.scss']
 })
 
-export class SessionComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SessionComponent implements OnInit {
   options: Leaflet.MapOptions = {
     layers: getLayers(),
     zoom: 12,
@@ -69,7 +69,7 @@ isInvalidDate = (m: moment.Moment) =>  {
 
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
-  displayedColumns: string[] = ['id', 'lieu', 'date_fin', 'nb_participant', 'organisme', 'formateur', 'formation', 'date_debut', 'modifier', 'supprimer'];
+  displayedColumns: string[] = ['select','id', 'lieu', 'date_fin', 'nb_partcipant', 'organisme', 'formateur', 'formation', 'date_debut', 'modifier', 'supprimer'];
   dataSource: MatTableDataSource<Session>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
@@ -89,6 +89,7 @@ isInvalidDate = (m: moment.Moment) =>  {
   cities: string[];
   lieu: String;
   participants: Participant[];
+  list: any[]=[];
   constructor(private sessionservice: SessionService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
@@ -104,12 +105,7 @@ isInvalidDate = (m: moment.Moment) =>  {
       this.alwaysShowCalendars = true;
 
   }
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
-  }
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
-  }
+
 
   onLocationSelected(event) {
 
@@ -146,7 +142,8 @@ isInvalidDate = (m: moment.Moment) =>  {
   
     this.form = this._formBuilder.group({
       lieu: ['', Validators.required],
-      nb_participant: ['', Validators.required],
+      nb_partcipant: ['', Validators.required],
+
     });
 
     console.log(this.form);
@@ -161,7 +158,6 @@ isInvalidDate = (m: moment.Moment) =>  {
         this.dataSource.sort = this.sort;
         console.log(sessions);
         return sessions;
-
       });
   }
   getFormations() {
@@ -227,20 +223,17 @@ isInvalidDate = (m: moment.Moment) =>  {
     this._snackBar.open("session deleted successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
   }
   OnCreateUser(): any {
-    
-    const nb_participant = this.form.get('nb_participant').value;
-   
-
 
     const session = {
       lieu : this.lieu,
       date_debut : this.start_date,
       date_fin : this.end_date,
-      nb_partcipant : nb_participant,
       organisme : this.selectedOrganisme,
       formateur : this.selectedFormateur,
       formation : this.selectedFormation,
-      participants : this.selectdeParticipants
+      participants : this.selectdeParticipants,
+      nb_partcipant : this.selectdeParticipants.length,
+
   };
   console.log(session);
     this.sessionservice.createSession(session).subscribe(res => {
@@ -254,32 +247,39 @@ isInvalidDate = (m: moment.Moment) =>  {
 
   editThisUser(id) {
     localStorage.setItem('id', id);
-    
+    console.log(this.selectdeParticipants)
+
     this.sessionservice.getSessionById(id).subscribe((data: any) => {
       console.log(data);
       this.formation = data;
       this.form.get('lieu').setValue(data.lieu);
-      this.form.get('nb_participant').setValue(data.nb_partcipant);
+      this.form.get('nb_partcipant').setValue(data.nb_partcipant);
       this.selectedFormation = data.formation;
-      
+        this.lieu = data.lieu ;
+        this.selectdeParticipants = data.participants ;
+        this.start_date = data.date_debut ;
+        this.end_date = data.date_fin ;
+        this.selectedOrganisme = data.organisme ;
+        this.selectedFormateur = data.formateur;
+        this.selectedFormation = data.formation ;
+
     });
     
   }
   
   updateUser() {
     const id = localStorage.getItem('id');
-    const nb_participant = this.form.get('nb_participant').value;
-
     const session = {
       id: id,
       lieu : this.lieu,
       date_debut : this.start_date,
       date_fin : this.end_date,
-      nb_partcipant : nb_participant,
       organisme : this.selectedOrganisme,
       formateur : this.selectedFormateur,
       formation : this.selectedFormation,
-      participants : this.selectdeParticipants
+      participants : this.selectdeParticipants,
+      nb_partcipant : this.selectdeParticipants.length,
+
   };
     this.sessionservice.updateSession(session).subscribe(res => {
       this._snackBar.open("session updated successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
@@ -321,6 +321,37 @@ isInvalidDate = (m: moment.Moment) =>  {
     let d = new Date(inputDate) // this might not be needed if the date is already a Date() object
     return  ('0' + d.getDate()).slice(-2)+ '/' + ('0' + (d.getMonth()+1)).slice(-2) + '/' + d.getFullYear(); // the zeroes and slice weirdness is to have nice padding, borrowed from https://stackoverflow.com/a/3605248/3158815
   }
+  checkAllCheckBox(ev: any) { // Angular 13
+		this.sessions.forEach(x => x.checked = ev.target.checked)
+	}
+
+	isAllCheckBoxChecked() {
+		return this.sessions.every(p => p.checked);
+	}
+
+  deleteProducts(): void {
+		const selectedProducts = this.sessions.filter(domaine => domaine.checked).map(p => p.id);
+    if (selectedProducts.length == 0){
+      this._snackBar.open("Select a least one session", 'x', { duration: 2000, panelClass: ["snack-style"] });
+
+    }
+		console.log (selectedProducts);
+		for (let i=0 ; i<selectedProducts.length ; i++){
+      this.sessionservice.getSessionById(selectedProducts[i]).subscribe(res => {
+        this.list.push(res) ;
+        this.sessionservice.deleteSessions(this.list).subscribe(res =>{
+          console.log(res);
+          this._snackBar.open("sessions deleted successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
+          this.getAll();
+        })
+        
+      })
+
+      
+      
+    }
+		
+	}
 }
 export const getLayers = (): Leaflet.Layer[] => {
   return [
@@ -334,4 +365,5 @@ export const getLayers = (): Leaflet.Layer[] => {
 function takeUntil(_onDestroy: any): import("rxjs").OperatorFunction<any, unknown> {
   throw new Error('Function not implemented.');
 }
+
 

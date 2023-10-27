@@ -21,9 +21,11 @@ import { OrganismeComponent } from './organisme/organisme.component';
 import { FormationComponent } from './formation/formation.component';
 import { FormateurComponent } from './formateur/formateur.component';
 import { ParticipantComponent } from './participant/participant.component';
+import { RoleGuard } from 'src/app/shared/services/role.guard';
+import { TestComponent } from './test/test.component';
+import { UserGuard } from '../../shared/services/user.guard'
 import { SessionComponent } from './session/session.component';
 import { SessionDetailComponent } from './session-detail/session-detail.component';
-
 const routes: Routes = [
   {
     path: '',
@@ -32,33 +34,9 @@ const routes: Routes = [
     },
     children: [
       {
-        path: '',
-        redirectTo: 'cards'
-      },
-      {
-        path: 'cards',
-        component: CardsComponent,
-        data: {
-          title: 'Cards'
-        }
-      },
-      {
-        path: 'forms',
-        component: FormsComponent,
-        data: {
-          title: 'Forms'
-        }
-      },
-      {
-        path: 'switches',
-        component: SwitchesComponent,
-        data: {
-          title: 'Switches'
-        }
-      },
-      {
         path: 'users',
         component: UserComponent,
+        canActivate: [RoleGuard],
         data: {
           title: 'Users'
         }
@@ -66,6 +44,7 @@ const routes: Routes = [
       {
         path: 'domaines',
         component: DomaineComponent,
+        canActivate: [RoleGuard],
         data: {
           title: 'Domaines'
         }
@@ -73,6 +52,7 @@ const routes: Routes = [
       {
         path: 'pays',
         component: PaysComponent,
+        canActivate: [RoleGuard],
         data: {
           title: 'Pays'
         }
@@ -80,6 +60,7 @@ const routes: Routes = [
       {
         path: 'profils',
         component: ProfilComponent,
+        canActivate: [RoleGuard],
         data: {
           title: 'Profils'
         }
@@ -87,6 +68,7 @@ const routes: Routes = [
       {
         path: 'organismes',
         component: OrganismeComponent,
+        canActivate: [RoleGuard],
         data: {
           title: 'Organismes'
         }
@@ -94,6 +76,7 @@ const routes: Routes = [
       {
         path: 'formations',
         component: FormationComponent,
+        canActivate: [UserGuard],
         data: {
           title: 'Formations'
         }
@@ -101,6 +84,7 @@ const routes: Routes = [
       {
         path: 'formateurs',
         component: FormateurComponent,
+        canActivate: [UserGuard],
         data: {
           title: 'Formateurs'
         }
@@ -108,8 +92,34 @@ const routes: Routes = [
       {
         path: 'participants',
         component: ParticipantComponent,
+        canActivate: [UserGuard],
         data: {
           title: 'Participants'
+        }
+      },
+      {
+        path: 'sessions',
+        component: SessionComponent,
+        canActivate: [UserGuard],
+
+        data: {
+          title: 'Sessions'
+        }
+      },
+      {
+        path: 'sessions/detail/:id',
+        component: SessionDetailComponent,
+        canActivate: [UserGuard],
+
+        data: {
+          title: 'Sessions'
+        }
+      },
+      {
+        path: 'test',
+        component: TestComponent,
+        data: {
+          title: 'Test'
         }
       },
       {
@@ -166,23 +176,10 @@ const routes: Routes = [
         component: NavbarsComponent,
         data: {
           title: 'Navbars'
-        },
-      },
-      {
-      path: 'sessions',
-      component: SessionComponent,
-      data: {
-        title: 'Sessions'
-      }
-      },
-      {
-        path: 'sessions/detail/:id',
-        component: SessionDetailComponent,
-        data: {
-          title: 'Sessions'
         }
-        }
-      
+      },
+
+
     ]
   }
 ];
@@ -191,4 +188,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class BaseRoutingModule {}
+export class BaseRoutingModule { }

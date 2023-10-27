@@ -7,10 +7,12 @@ export class Session {
     id : number ;
     lieu : string ;
     date_fin : string ;
-    nb_participant : number ;
+    nb_partcipant : number ;
     organisme : Organisme ;
     formateur : Formateur ;
     formation : Formation ;
     participants : Participant[];
     date_debut: string;
+    checked?: boolean;
+
 }

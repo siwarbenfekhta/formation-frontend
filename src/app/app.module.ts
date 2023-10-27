@@ -6,7 +6,6 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { PERFECT_SCROLLBAR_CONFIG } from 'ngx-perfect-scrollbar';
 import { PerfectScrollbarConfigInterface } from 'ngx-perfect-scrollbar';
-
 import { IconModule, IconSetModule, IconSetService } from '@coreui/icons-angular';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
@@ -23,6 +22,7 @@ import { P500Component } from './views/error/500.component';
 import { LoginComponent } from './views/login/login.component';
 import { RegisterComponent } from './views/register/register.component';
 import {HttpClientModule} from '@angular/common/http';
+
 const APP_CONTAINERS = [
   DefaultLayoutComponent
 ];
@@ -33,6 +33,7 @@ import {
   AppHeaderModule,
   AppFooterModule,
   AppSidebarModule,
+
 } from '@coreui/angular';
 
 // Import routing module
@@ -44,6 +45,8 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { ChartsModule } from 'ng2-charts';
 import { ModalModule, BsModalService } from 'ngx-bootstrap/modal';
 import { DataTablesModule } from 'angular-datatables';
+import { AuthInterceptorPorviders } from './shared/interceptor/auth.interceptor';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { GoogleMapsModule } from '@angular/google-maps'
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { NgxDaterangepickerMd } from 'ngx-daterangepicker-material';
@@ -53,8 +56,6 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SessionDetailComponent } from './views/base/session-detail/session-detail.component';
-
-
 @NgModule({
   imports: [
     BrowserModule,
@@ -75,12 +76,13 @@ import { SessionDetailComponent } from './views/base/session-detail/session-deta
     ModalModule.forRoot(),
     DataTablesModule,
     AppFooterModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatSnackBarModule,
     LeafletModule,
     BsDatepickerModule.forRoot(),
     DatepickerModule.forRoot(),
-  
-   
-    
+
 
 
   ],
@@ -99,6 +101,7 @@ import { SessionDetailComponent } from './views/base/session-detail/session-deta
     MatNativeDateModule 
   ],
   providers: [
+    AuthInterceptorPorviders , 
     {
       provide: LocationStrategy,
       useClass: HashLocationStrategy,
@@ -109,5 +112,4 @@ import { SessionDetailComponent } from './views/base/session-detail/session-deta
   bootstrap: [ AppComponent ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
-
 export class AppModule { }

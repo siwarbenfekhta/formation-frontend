@@ -122,6 +122,7 @@ export class FormateurComponent implements OnInit {
       tel: tel,
       organisme: this.selectedOrganisme
     };
+    console.log(formateur)
     this.formateurService.createformateur(formateur).subscribe(res => {
       console.log("ok");
       this.getAll();

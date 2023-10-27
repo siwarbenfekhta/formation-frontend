@@ -26,12 +26,14 @@ export class DomaineComponent implements OnInit {
   form: FormGroup;
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
-  displayedColumns: string[] = ['id', 'libelle', 'modifier', 'supprimer'];
+  displayedColumns: string[] = ['select','id', 'libelle', 'modifier', 'supprimer'];
   dataSource: MatTableDataSource<Domaine>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   checked: string;
   domaine: any;
+  list: any=[];
+  res: Domaine;
   constructor(private domaineService: DomaineService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
@@ -130,4 +132,36 @@ export class DomaineComponent implements OnInit {
   exportTable() {
     TableUtil.exportTableToExcel("ExampleMaterialTable");
   }
+
+  checkAllCheckBox(ev: any) { // Angular 13
+		this.domaines.forEach(x => x.checked = ev.target.checked)
+	}
+
+	isAllCheckBoxChecked() {
+		return this.domaines.every(p => p.checked);
+	}
+
+  deleteProducts(): void {
+		const selectedProducts = this.domaines.filter(domaine => domaine.checked).map(p => p.id);
+    if (selectedProducts.length == 0){
+      this._snackBar.open("Select a least one domaine", 'x', { duration: 2000, panelClass: ["snack-style"] });
+
+    }
+		console.log (selectedProducts);
+		for (let i=0 ; i<selectedProducts.length ; i++){
+      this.domaineService.getDomaineById(selectedProducts[i]).subscribe(res => {
+        this.list.push(res) ;
+        this.domaineService.deleteDomaines(this.list).subscribe(res =>{
+          console.log(res);
+          this._snackBar.open("Domaines deleted successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
+          this.getAll();
+        })
+        
+      })
+
+      
+      
+    }
+		
+	}
 }

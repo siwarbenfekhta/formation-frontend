@@ -11,4 +11,5 @@ export class Participant {
     organisme : Organisme ;
     pays : Pays ;
     profil : Profil ;
+    type : string ;
 }

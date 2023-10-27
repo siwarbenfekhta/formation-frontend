@@ -23,24 +23,31 @@ import { Profil } from 'src/app/shared/models/Profil.model';
 })
 export class ParticipantComponent implements OnInit {
   selectedFW = new FormControl();
-  participants: Participant[];
+  participants: Participant[] = [];
   modalRef: BsModalRef;
   form: FormGroup;
 
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
-  displayedColumns: string[] = ['id', 'nom', 'prenom', 'email', 'tel', 'organisme', 'pays', 'profil', 'modifier', 'supprimer'];
+  displayedColumns: string[] = ['id', 'nom', 'prenom', 'email', 'tel','type', 'organisme', 'pays', 'profil', 'modifier', 'supprimer'];
+  types : string[] = ['NATIONAL' , 'INTERNATIONAL'] ;
   dataSource: MatTableDataSource<Participant>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   checked: string;
   participant: any;
-  selectedOrganisme: any;
+  selectedOrganisme: any = null;
   organismes: Organisme[];
   pays: Pays[];
   profils: Profil[];
   selectedProfil: any;
-  selectedPays: any;
+  selectedPays: any = null;
+  selectedType: any;
+  showOrg: boolean = false;
+  showPays: boolean = false;
+  org: any;
+  payss: any;
+  profil: any;
   constructor(private participantService: ParticipantService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
@@ -75,9 +82,11 @@ export class ParticipantComponent implements OnInit {
       prenom: ['', Validators.required],
       email: ['', Validators.required],
       tel: ['', Validators.required],
+      type: [''],
+      organisme: [''],
+      pays: [''],
+      profil: [''],
     });
-
-    console.log(this.form);
   }
 
 
@@ -85,12 +94,24 @@ export class ParticipantComponent implements OnInit {
   getAll() {
     this.participantService.getAll()
       .subscribe((participants) => {
-        this.participants = participants.reverse();
+        for (let i=0 ; i< participants.length ; i++){
+          if (participants[i].organisme == null)
+          {participants[i].organisme = {id : 0 , libelle : " "} ;
+          this.participants.push(participants[i]) ;}
+        
+        else if (participants[i].pays == null)
+        {participants[i].pays = {id : 0 , libelle : " "} ;
+        this.participants.push(participants[i]) ;}
+        else {
+          this.participants.push(participants[i]);
+        }
+      }
+        this.participants = this.participants.reverse();
         this.dataSource = new MatTableDataSource(this.participants);
         this.dataSource.paginator = this.paginator;
         this.dataSource.sort = this.sort;
-        console.log(participants);
-        return participants;
+        console.log(this.participants);
+        return this.participants;
 
       });
   }
@@ -138,12 +159,13 @@ export class ParticipantComponent implements OnInit {
     const prenom = this.form.get('prenom').value;
     const email = this.form.get('email').value;
     const tel = this.form.get('tel').value;
-
+    
     const participant = {
       nom: nom,
       prenom: prenom,
       email: email,
       tel: tel,
+      type: this.selectedType,
       organisme: this.selectedOrganisme,
       pays: this.selectedPays,
       profil: this.selectedProfil,
@@ -154,25 +176,42 @@ export class ParticipantComponent implements OnInit {
       this._snackBar.open("participant added successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
       this.modalRef.hide();
       this.form.reset();
+      this.selectedOrganisme = null ;
+      this.selectedPays = null ;
     })
   }
 
   editThisUser(id) {
     localStorage.setItem('id', id);
-    console.log(id);
-    console.log("got it");
+    
     this.participantService.getparticipantById(id).subscribe((data: any) => {
       this.participant = data;
-      this.form.get('nom').setValue(data.nom);
-      this.form.get('prenom').setValue(data.prenom);
-      this.form.get('email').setValue(data.email);
-      this.form.get('tel').setValue(data.tel);
+        this.form.get('nom').setValue(data.nom);
+        this.form.get('prenom').setValue(data.prenom);
+        this.form.get('email').setValue(data.email);
+        this.form.get('tel').setValue(data.tel);
+        this.form.get('type').setValue(data.type);
+        this.form.get('organisme').setValue(data.organisme);
+        this.form.get('pays').setValue(data.pays);
+        this.form.get('profil').setValue(data.profil);
+
 
     });
+    console.log(this.form);
 
   }
   updateUser() {
     const id = localStorage.getItem('id');
+    if(this.selectedOrganisme == null){
+      this.selectedOrganisme = this.form.value.organisme
+    }
+    if(this.selectedPays == null){
+      this.selectedPays = this.form.value.pays;
+    }
+    if(this.selectedProfil == null){
+      this.selectedProfil = this.form.value.profil
+    }
+    console.log(this.form);
     const participant = {
       id: id,
       nom: this.form.value.nom,
@@ -182,12 +221,16 @@ export class ParticipantComponent implements OnInit {
       organisme: this.selectedOrganisme,
       pays: this.selectedPays,
       profil: this.selectedProfil,
+      type : this.form.value.type 
     }
     console.log(participant);
     this.participantService.updateparticipant(participant).subscribe(res => {
       this._snackBar.open("participant updated successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
       this.form.reset();
       this.modalRef.hide();
+      this.selectedOrganisme = null ;
+      this.selectedPays = null ;
+      this.selectedProfil = null;
       this.getAll();
 
     })
@@ -195,6 +238,18 @@ export class ParticipantComponent implements OnInit {
   }
   exportTable() {
     TableUtil.exportTableToExcel("ExampleMaterialTable");
+  }
+  onSelectEvent0(value: any) {
+    console.log(value.value);
+    this.selectedType = value.value;
+    if(this.selectedType == 'NATIONAL'){
+      this.showPays = false ;
+      this.showOrg = true ;
+    }
+    else {
+      this.showOrg = false ;
+      this.showPays = true ;
+    }
   }
   onSelectEvent(value: any) {
     console.log(value.value);
@@ -209,4 +264,8 @@ export class ParticipantComponent implements OnInit {
     this.selectedPays = value.value;
   }
 
+  clear(){
+    this.showPays = false ;
+    this.showOrg = false ;
+  }
 }

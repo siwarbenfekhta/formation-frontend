@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TableUtil } from "../tableUtil";
+import { AuthService } from 'src/app/shared/services/auth.service';
 
 export function getAlertConfig(): AlertConfig {
   return Object.assign(new AlertConfig(), { type: 'success' });
@@ -26,18 +27,20 @@ export class UserComponent implements OnInit {
   form: FormGroup;
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
-  displayedColumns: string[] = ['Code', 'login', 'role', 'modifier', 'supprimer'];
+  displayedColumns: string[] = ['id', 'username', 'role', 'modifier', 'supprimer'];
   dataSource: MatTableDataSource<User>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   user: any;
-  roles: string[] = ['SIMPLEUSER', 'ADMIN'];
+  roles: string[] = ['ROLE_USER', 'ROLE_ADMIN'];
   checked: string;
+  updateRole : any
   constructor(private userService: UserService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
     private _formBuilder: FormBuilder,
-    private router: Router) {
+    private router: Router,
+    private authService : AuthService) {
   }
 
   openModal(template: TemplateRef<any>) {
@@ -57,7 +60,7 @@ export class UserComponent implements OnInit {
   ngOnInit() {
     this.getAll();
     this.form = this._formBuilder.group({
-      login: ['', Validators.required],
+      username: ['', Validators.required],
       password: ['', Validators.required],
       role: ['']
     });
@@ -91,15 +94,15 @@ export class UserComponent implements OnInit {
     this._snackBar.open("User deleted successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
   }
   OnCreateUser(): any {
-    const login = this.form.get('login').value;
+    const username = this.form.get('username').value;
     const password = this.form.get('password').value;
-    const role = localStorage.getItem('role');
+    const role = localStorage.getItem('roleSet');
     const user = {
-      login: login,
+      username: username,
       password: password,
-      role: role
+      role: [ role ]
     };
-    this.userService.createUser(user).subscribe(res => {
+    this.authService.onSignup(user).subscribe(res => {
       console.log("ok");
       this.getAll();
       this._snackBar.open("User added successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
@@ -110,18 +113,20 @@ export class UserComponent implements OnInit {
 
 
   radioChange(role) {
-    localStorage.setItem('role', role);
-    console.log(role);
+    localStorage.setItem('roleSet', role.value);
+    console.log(role.value);
   }
   editThisUser(id) {
     localStorage.setItem('id', id);
     this.userService.getUserById(id).subscribe((data: any) => {
       this.user = data;
-      this.form.get('login').setValue(data.login);
+      this.form.get('username').setValue(data.username);
       this.form.get('password').setValue(data.password);
-      this.form.get('role').setValue(data.role);
+      this.form.get('role').setValue(data.roles[0].name);
       this.checked = data.role;
+      this.checked = this.user.roles[0].name ;
       console.log(this.checked);
+
 
 
     });
@@ -129,13 +134,20 @@ export class UserComponent implements OnInit {
   }
   updateUser() {
     const code = localStorage.getItem('id');
-    const role = localStorage.getItem('role');
-    const user = {
-      code: code,
-      login: this.form.value.login,
-      password: this.form.value.password,
-      role: role
+    let role = localStorage.getItem('roleSet');
+    if (role == 'ROLE_ADMIN'){
+      this.updateRole = { id : 2}
     }
+    else {
+      this.updateRole = {id : 1}
+    }
+    const user = {
+      id: code,
+      username: this.form.value.username,
+      password: this.form.value.password,
+      roles: [this.updateRole]
+    }
+    console.log(user);
     this.userService.updateUser(user).subscribe(res => {
       this._snackBar.open("User updated successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
       this.form.reset();

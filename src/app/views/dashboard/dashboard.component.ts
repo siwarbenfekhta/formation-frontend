@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { getStyle, hexToRgba } from '@coreui/coreui/dist/js/coreui-utilities';
 import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
+import { FormationService } from 'src/app/shared/services/formation.service';
+import { listenToTriggers } from 'ngx-bootstrap/utils';
+import { Subject } from 'rxjs';
 
 @Component({
   templateUrl: 'dashboard.component.html'
@@ -8,6 +11,72 @@ import { CustomTooltips } from '@coreui/coreui-plugin-chartjs-custom-tooltips';
 export class DashboardComponent implements OnInit {
 
   radioModel: string = 'Month';
+  var: any;
+  onUserUpdated: Subject<any>;
+  listName: any[]=[];
+  barChartLabels: any[];
+  listBudget: any[]=[];
+  public barChartData: any[] = [
+    {data: this.listBudget, label: 'Budget'},
+  ];
+  constructor(private formationService : FormationService, ){
+    this.onUserUpdated = new Subject();
+
+  }
+   ngOnInit() {
+
+    this.formationService.getnbNat().subscribe(res =>
+      {
+        localStorage.setItem('nbNat' , res.toString()) ;
+      })
+
+      this.formationService.getnbIntern().subscribe(res =>
+        {
+          localStorage.setItem('nbInter' , res.toString()) ;
+        })
+        this.formationService.getAll().subscribe(res =>
+          {for (let i=0 ; i<res.length ; i++){
+            this.listName.push(res[i].titre);
+            this.listBudget.push(res[i].budget);
+
+          }
+          console.log(this.listBudget);
+          this.barChartLabels = this.listName;
+          this.barChartData= [
+            {data: this.listBudget, label: 'Budget'},
+          ];
+
+          
+          }
+          
+          )
+
+    // generate random values for mainChart
+    for (let i = 0; i <= this.mainChartElements; i++) {
+      //this.mainChartData1.push(6 , 3 , 5 , 0);
+      this.mainChartData2.push(this.random(80, 100));
+      this.mainChartData3.push(65);
+    }
+    this.nbNat = parseInt( localStorage.getItem('nbNat')) ;
+    this.nbIntern = parseInt(localStorage.getItem('nbInter'));
+    console.log(this.nbIntern) ;
+  }
+
+
+  
+    // events
+    public chartClicked(e: any): void {
+      console.log(e);
+    }
+  
+    public chartHovered(e: any): void {
+      console.log(e);
+    }
+  public nbNat = parseInt( localStorage.getItem('nbNat')) ;
+   public nbIntern = parseInt(localStorage.getItem('nbInter'));
+  public pieChartLabels: string[] = ['National', 'International'];
+  public pieChartData: number[] = [this.nbNat,this.nbIntern  ];
+  public pieChartType = 'pie';
 
   // lineChart1
   public lineChart1Data: Array<any> = [
@@ -16,7 +85,7 @@ export class DashboardComponent implements OnInit {
       label: 'Series A'
     }
   ];
-  public lineChart1Labels: Array<any> = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  public lineChart1Labels: Array<any> = ['2022-04-21', '2022-04-22'];
   public lineChart1Options: any = {
     tooltips: {
       enabled: false,
@@ -218,20 +287,12 @@ export class DashboardComponent implements OnInit {
 
   public mainChartData: Array<any> = [
     {
-      data: this.mainChartData1,
+      data: [3 ,10 ,5 , 15 , 2],
       label: 'Current'
     },
-    {
-      data: this.mainChartData2,
-      label: 'Previous'
-    },
-    {
-      data: this.mainChartData3,
-      label: 'BEP'
-    }
   ];
   /* tslint:disable:max-line-length */
-  public mainChartLabels: Array<any> = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', 'Monday', 'Thursday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  public mainChartLabels: Array<any> = ['2022-04-21', '2022-04-22' , '2022-04-23' , '2022-04-24','2022-05-24'];
   /* tslint:enable:max-line-length */
   public mainChartOptions: any = {
     tooltips: {
@@ -255,7 +316,7 @@ export class DashboardComponent implements OnInit {
         },
         ticks: {
           callback: function(value: any) {
-            return value.charAt(0);
+            return value;
           }
         }
       }],
@@ -263,8 +324,8 @@ export class DashboardComponent implements OnInit {
         ticks: {
           beginAtZero: true,
           maxTicksLimit: 5,
-          stepSize: Math.ceil(250 / 5),
-          max: 250
+          stepSize: 5,
+          max: 20
         }
       }]
     },
@@ -376,13 +437,14 @@ export class DashboardComponent implements OnInit {
   public random(min: number, max: number) {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
+  public barChartOptions: any = {
+    scaleShowVerticalLines: false,
+    responsive: true
+  };
+  public barChartType = 'bar';
+  public barChartLegend = true;
 
-  ngOnInit(): void {
-    // generate random values for mainChart
-    for (let i = 0; i <= this.mainChartElements; i++) {
-      this.mainChartData1.push(this.random(50, 200));
-      this.mainChartData2.push(this.random(80, 100));
-      this.mainChartData3.push(65);
-    }
-  }
+ 
+
+
 }

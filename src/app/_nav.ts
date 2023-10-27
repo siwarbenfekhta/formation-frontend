@@ -1,6 +1,37 @@
 import { INavData } from '@coreui/angular';
 
-export const navItems: INavData[] = [
+export const navItemsUser: INavData[] = [
+/*   {
+    name: 'Dashboard',
+    url: '/dashboard',
+    icon: 'icon-speedometer',
+    badge: {
+      variant: 'info',
+      text: 'NEW'
+    }
+  }, */
+  {
+    name: 'Sessions',
+    url: '/base/sessions',
+    icon: 'icon-puzzle'
+  }, 
+  {
+    name: 'Formations',
+    url: '/base/formations',
+    icon: 'icon-puzzle'
+  },
+  {
+    name: 'Formateurs',
+    url: '/base/formateurs',
+    icon: 'icon-puzzle'
+  },
+  {
+    name: 'Participants',
+    url: '/base/participants',
+    icon: 'icon-puzzle'
+  },
+]
+export const navItemsAdmin: INavData[] = [
   {
     name: 'Dashboard',
     url: '/dashboard',
@@ -117,21 +148,8 @@ export const navItems: INavData[] = [
     url: '/base/users',
     icon: 'icon-puzzle'
   },
-  {
-    name: 'Formations',
-    url: '/base/formations',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'Formateurs',
-    url: '/base/formateurs',
-    icon: 'icon-puzzle'
-  },
-  {
-    name: 'Participants',
-    url: '/base/participants',
-    icon: 'icon-puzzle'
-  },
+
+
 /*   {
     name: 'Buttons',
     url: '/buttons',
@@ -153,12 +171,13 @@ export const navItems: INavData[] = [
         icon: 'icon-cursor'
       }
     ]
-  },
-  {
+  },*/
+/*   {
     name: 'Charts',
     url: '/charts',
     icon: 'icon-pie-chart'
-  },
+  }, */
+  /*
   {
     name: 'Icons',
     url: '/icons',

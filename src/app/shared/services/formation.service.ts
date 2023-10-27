@@ -31,5 +31,16 @@ export class FormationService {
         return this.http.delete<Formation>(`${AppConfig.formationUrl}/${id}`);
     }
 
+    getnbNat() {
+        return this.http.get<number>(`${AppConfig.formationUrl}/nat`);
+    }
+    getnbIntern() {
+        return this.http.get<number>(`${AppConfig.formationUrl}/intern`);
+    }
+
+    getVisit() {
+        return this.http.get<[]>(`${AppConfig.formationUrl}/date`);
+    }
+
 
 }

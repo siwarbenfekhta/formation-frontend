@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AppConfig } from '../../app.config';
 import { Subject } from 'rxjs';
 import { Organisme } from '../models/organisme.model';
@@ -31,7 +31,18 @@ export class OrgansimeService {
     deleteOrganisme(id) {
         return this.http.delete<Organisme>(`${AppConfig.organismeUrl}/${id}`);
     }
-
+    deleteOrganismes(organisme) {
+        console.log(organisme) ;
+        const options = {
+			headers: new HttpHeaders({
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			}),
+			responseType: 'text' as 'json'
+		};
+        return this.http.post<Organisme>(`${AppConfig.organismeUrl}/delete` , organisme , options);
+        
+    }
 
 
 

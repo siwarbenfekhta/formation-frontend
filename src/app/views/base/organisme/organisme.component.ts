@@ -25,12 +25,13 @@ export class OrganismeComponent implements OnInit {
   form: FormGroup;
 
   @ViewChild('primaryModal') public primaryModal: ModalDirective;
-  displayedColumns: string[] = ['id', 'libelle', 'modifier', 'supprimer'];
+  displayedColumns: string[] = ['select','id', 'libelle', 'modifier', 'supprimer'];
   dataSource: MatTableDataSource<Organisme>;
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   checked: string;
   organisme: any;
+  list: any[]=[];
   constructor(private organismeService: OrgansimeService,
     private modalService: BsModalService,
     private _snackBar: MatSnackBar,
@@ -129,5 +130,35 @@ export class OrganismeComponent implements OnInit {
   exportTable() {
     TableUtil.exportTableToExcel("ExampleMaterialTable");
   }
+  checkAllCheckBox(ev: any) { // Angular 13
+		this.organismes.forEach(x => x.checked = ev.target.checked)
+	}
+
+	isAllCheckBoxChecked() {
+		return this.organismes.every(p => p.checked);
+	}
+  deleteProducts(): void {
+		const selectedProducts = this.organismes.filter(organisme =>organisme.checked).map(p => p.id);
+    if (selectedProducts.length == 0){
+      this._snackBar.open("Select a least one organisme", 'x', { duration: 2000, panelClass: ["snack-style"] });
+
+    }
+		console.log (selectedProducts);
+		for (let i=0 ; i<selectedProducts.length ; i++){
+      this.organismeService.getOrganismeById(selectedProducts[i]).subscribe(res => {
+        this.list.push(res) ;
+        this.organismeService.deleteOrganismes(this.list).subscribe(res =>{
+          console.log(res);
+          this._snackBar.open("Organismes deleted successfuly", 'x', { duration: 2000, panelClass: ["snack-style"] });
+          this.getAll();
+        })
+        
+      })
+
+      
+      
+    }
+		
+	}
 
 }

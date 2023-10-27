@@ -74,8 +74,8 @@ export class ChartJSComponent {
   public radarChartType = 'radar';
 
   // Pie
-  public pieChartLabels: string[] = ['Download Sales', 'In-Store Sales', 'Mail Sales'];
-  public pieChartData: number[] = [300, 500, 100];
+  public pieChartLabels: string[] = ['National', 'International'];
+  public pieChartData: number[] = [2, 3];
   public pieChartType = 'pie';
 
   // PolarArea
